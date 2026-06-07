@@ -125,6 +125,11 @@
 (function () {
   if (typeof THREE === "undefined") return;
 
+  // ---- lobby mode params (e.g. ?start=3 to begin at the 3-cat level) ----
+  const LOBBY = new URLSearchParams(location.search);
+  const START_LEVEL = Math.max(1, Math.min(3, parseInt(LOBBY.get("start") || "1", 10) || 1)) - 1;
+  const AUTO_START = LOBBY.has("start");
+
   // ---- tuning ----
   const S = 3.6;                 // grid cell size
   const MOUSE_R = 0.75;          // mouse collision radius
@@ -431,7 +436,7 @@
   // ---- flow ----
   function startGame() {
     initAudio(); if (actx && actx.state === "suspended") actx.resume();
-    buildLevel(0);
+    buildLevel(START_LEVEL);
     document.getElementById("startScreen").classList.add("hidden");
     document.getElementById("overScreen").classList.add("hidden");
     document.getElementById("winScreen").classList.add("hidden");
@@ -635,6 +640,7 @@
   }
 
   init();
+  if (AUTO_START) startGame();   // launched straight from a lobby mode
 })();
 </script>
 </body>
